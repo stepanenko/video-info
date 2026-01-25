@@ -11,7 +11,7 @@
 ```py
 ffmpeg.input(ts_name).output(
     video_name,
-    s='1280x720',
+    s='1280x720', # resolution
     crf=28,
     preset='slow', # slow, medium, fast (slower = better compression)
     audio_bitrate='96k' # Compress audio
@@ -38,3 +38,26 @@ Mbps × 60 seconds ÷ 8 bits/byte = MB per minute
 - 3 Mbps = 22.5 MB per minute
 - 4 Mbps = 30 MB per minute
 - 5 Mbps = 37.5 MB per minute
+
+### If you only specify resolution without bitrate or CRF, ffmpeg will automatically adjust the bitrate to match the new resolution.
+```py 
+ffmpeg.input(ts_name).output(video_name, s='1280x720').run()
+```
+Ffmpeg will:  
+- Use its default encoding mode (CRF 23 for libx264)
+- Automatically use less bitrate for 720p than it would for 1080p
+- The bitrate will scale roughly with pixel count
+
+Example:  
+- If 1080p uses ~3.3 Mbps with CRF 23
+- Then 720p would use roughly ~1.5-2 Mbps with CRF 23
+- (720p has about 44% the pixels of 1080p)
+
+#### Just reducing resolution alone will reduce file size significantly!
+```py
+# 1080p → 720p: expect ~50-60% file size reduction
+ffmpeg.input(ts_name).output(video_name, s='1280x720').run()
+
+# 1080p → 480p: expect ~70-80% file size reduction  
+ffmpeg.input(ts_name).output(video_name, s='854x480').run()
+```
