@@ -61,3 +61,18 @@ ffmpeg.input(ts_name).output(video_name, s='1280x720').run()
 # 1080p → 480p: expect ~70-80% file size reduction  
 ffmpeg.input(ts_name).output(video_name, s='854x480').run()
 ```
+
+### YouTube Membership content
+
+When accessing the videos available only for members, you need to add `youtube_cookies.txt`:
+- To export cookies install the browser extension "Get cookies.txt LOCALLY" (Chrome/Firefox).  
+- Go to YouTube while logged in.
+- Using the extension export cookies to `youtube_cookies.txt`.
+- Use it:
+```py
+ydl_opts = {
+    'cookiefile': 'youtube_cookies.txt',
+    # Re-export the cookies if you see WARNING: [youtube] The provided YouTube account cookies are no longer valid.
+    # ... other options ...
+  }
+```
